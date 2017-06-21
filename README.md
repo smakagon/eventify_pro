@@ -25,20 +25,19 @@ ___
 ### Getting Started:
 This guide assumes you have created an account and obtained an API key from EventifyPro.
 
-It's really easy to start using EventifyPro, just 2 lines to start publishing events:
+It's really easy to start publishing events with EventifyPro, just 2 lines of code:
 
-```
+```ruby
 eventify_client = EventifyPro::Client.new(api_key: 'secret')
 eventify_client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 500 })
 ```
-In data argument you can pass any key-value pairs you need.
-
 
 ### Ruby On Rails
 In a basic Ruby On Rails application you could create class under `lib` directory:
 
-lib/eventify.rb
-```
+```ruby
+# lib/eventify.rb
+
 class Eventify
   def self.client
     @client ||= EventifyPro::Client.new(api_key: 'secret')
@@ -49,23 +48,26 @@ class Eventify
   end
 end
 ```
-Great, now to publish event from any place you your app you can use:
+Great, now to publish event from any place of your app use:
 
-`Eventify.publish(type: 'EventTypeString', data: { data_key: 'data value' })`
-
-'type': is where you place the type of the event, use something that is specific to the event and easy to understand.
-
-'data': will be the key and value pairs pertaining to the event.
-
-PS: Don't forget to enable loading of the lib directory in application.rb file: 
-
-config/application.rb
+```ruby
+Eventify.publish(type: 'EventTypeString', data: { data_key: 'data value' })
 ```
+
+* `type`: type of the event
+
+* `data`: will be the key and value pairs pertaining to the event
+
+PS: Don't forget to enable loading of the `lib` directory in application.rb file:
+
+```ruby
+# config/application.rb
+
 config.autoload_paths << Rails.root.join('lib')
 ```
 ___
 #### Example:
-```
+```ruby
 class OrdersController < ApplicationController
   def create
     @order = Order.new(params[:order])
@@ -88,7 +90,7 @@ Example:
   * It's possible to pass `raise_errors: true`. In that case EventifyPro will throw EventifyPro::Error exception if something went wrong.
 
 Example:
-```
+```ruby
 eventify_client = EventifyPro::Client.new(api_key: 'secret', raise_errors: true)
 begin
   eventify_client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 1500 })

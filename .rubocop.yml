@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
       - 'bin/**'
+      - 'vendor/**/*'
       - 'eventify.gemspec'
 Metrics/LineLength:
   Max: 80
