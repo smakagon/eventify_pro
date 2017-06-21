@@ -23,7 +23,7 @@ Or install it yourself as:
 ## Usage
 ___
 ### Getting Started:
-This guide assumes you have created an account and obtained an API key from EventifyPro.
+This guide assumes you have created an account and obtained an API key from [EventifyPro](http://eventify.pro)
 
 It's really easy to start publishing events with EventifyPro, just 2 lines of code:
 

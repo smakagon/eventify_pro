@@ -52,14 +52,14 @@ RSpec.describe EventifyPro::Client do
         end
 
         context 'with error response from API' do
-          it 'raises an Eventify::Error' do
+          it 'raises an EventifyPro::Error' do
             stub_request(:post, "#{base_uri}/events")
               .with(expected_request)
               .to_return(body: response_with_error, status: 401)
 
             expect do
               client.publish(type: event_type, data: event_data)
-            end.to raise_error(Eventify::Error, 'Invalid Token')
+            end.to raise_error(EventifyPro::Error, 'Invalid Token')
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
               .with(expected_request).once
@@ -67,7 +67,7 @@ RSpec.describe EventifyPro::Client do
         end
 
         context 'with invalid response from API' do
-          it 'raises an Eventify::Error' do
+          it 'raises an EventifyPro::Error' do
             stub_request(:post, "#{base_uri}/events")
               .with(expected_request)
               .to_return(body: invalid_response, status: 401)
@@ -75,7 +75,7 @@ RSpec.describe EventifyPro::Client do
             expect do
               client.publish(type: event_type, data: event_data)
             end.to raise_error(
-              Eventify::Error, 'Could not process response from Eventify'
+              EventifyPro::Error, 'Could not process response from EventifyPro'
             )
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
@@ -84,13 +84,13 @@ RSpec.describe EventifyPro::Client do
         end
 
         context 'when API is unavailable' do
-          it 'raises an Eventify::ServiceUnavailableError' do
+          it 'raises an EventifyPro::ServiceUnavailableError' do
             stub_request(:post, "#{base_uri}/events").to_timeout
             expect do
               client.publish(type: event_type, data: event_data)
             end.to raise_error(
-              Eventify::ServiceUnavailableError,
-              'Eventify is currently unavaliable'
+              EventifyPro::ServiceUnavailableError,
+              'EventifyPro is currently unavaliable'
             )
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
           end

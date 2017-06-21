@@ -2,7 +2,7 @@
 
 require 'bundler/setup'
 require 'webmock/rspec'
-require 'eventify'
+require 'eventify_pro'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

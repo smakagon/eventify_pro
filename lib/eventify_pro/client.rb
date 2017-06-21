@@ -26,7 +26,7 @@ module EventifyPro
       response = post_request('events', type, data)
 
       error_message = response['error_message'] || ''
-      raise Eventify::Error, error_message unless error_message.empty?
+      raise Error, error_message unless error_message.empty?
 
       true
     rescue => e
@@ -56,9 +56,9 @@ module EventifyPro
       response = http.request(request)
       JSON.parse(response.body)
     rescue JSON::ParserError
-      raise Error, 'Could not process response from Eventify'
+      raise Error, 'Could not process response from EventifyPro'
     rescue
-      raise ServiceUnavailableError, 'Eventify is currently unavaliable'
+      raise ServiceUnavailableError, 'EventifyPro is currently unavaliable'
     end
 
     def headers
