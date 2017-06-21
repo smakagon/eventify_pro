@@ -11,7 +11,7 @@ module EventifyPro
 
   # Client that allows to publish events
   class Client
-    BASE_URI = 'http://api.eventify.pro'
+    BASE_URI = 'http://api.eventify.pro'.freeze
 
     def initialize(api_key: nil, raise_errors: false)
       @api_key = api_key || ENV['EVENTIFY_API_KEY']

@@ -7,7 +7,7 @@ RSpec.describe EventifyPro::Client do
 
   context '#publish' do
     let(:event_type) { 'ProfileCreated' }
-    let(:event_data) { { 'name': 'John', 'email': 'john@doe.com' } }
+    let(:event_data) { { name: 'John', email: 'john@doe.com' } }
 
     let(:expected_request) do
       {
