@@ -1,0 +1,11 @@
+AllCops:
+  Exclude:
+      - 'bin/**'
+      - 'eventify.gemspec'
+Metrics/LineLength:
+  Max: 80
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+Metrics/MethodLength:
+  Max: 15
