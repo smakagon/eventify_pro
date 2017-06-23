@@ -28,8 +28,8 @@ This guide assumes you have created an account and obtained an API key from [Eve
 It's really easy to start publishing events with EventifyPro, just 2 lines of code:
 
 ```ruby
-eventify_client = EventifyPro::Client.new(api_key: 'secret')
-eventify_client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 500 })
+client = EventifyPro::Client.new(api_key: 'secret')
+client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 500 })
 ```
 
 ### Ruby On Rails
@@ -51,12 +51,12 @@ end
 Great, now to publish event from any place of your app use:
 
 ```ruby
-Eventify.publish(type: 'EventTypeString', data: { data_key: 'data value' })
+Eventify.publish('UserSignedUp', { user_id: 1, first_name: 'John', last_name: 'Doe' })
 ```
 
 * `type`: type of the event
 
-* `data`: will be the key and value pairs pertaining to the event
+* `data`: key and value pairs pertaining to the event
 
 PS: Don't forget to enable loading of the `lib` directory in application.rb file:
 

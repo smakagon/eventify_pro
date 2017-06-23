@@ -28,7 +28,7 @@ RSpec.describe EventifyPro::Client do
       }'
     end
 
-    let(:response_with_error) { '{ "error_message": "Invalid Token" }' }
+    let(:response_with_error) { '{ "error_message": "Invalid API key" }' }
     let(:invalid_response) { 'foo' }
 
     context 'with raise_errors = true' do
@@ -59,7 +59,7 @@ RSpec.describe EventifyPro::Client do
 
             expect do
               client.publish(type: event_type, data: event_data)
-            end.to raise_error(EventifyPro::Error, 'Invalid Token')
+            end.to raise_error(EventifyPro::Error, 'Invalid API key')
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
               .with(expected_request).once
