@@ -13,19 +13,22 @@ module EventifyPro
   class Client
     BASE_URI = 'http://api.eventify.pro/v1'
 
-    def initialize(api_key: nil, raise_errors: false)
+    def initialize(api_key: nil, raise_errors: false, logger: EventifyPro::DefaultLogger.new) # rubocop:disable LineLength
       @api_key = api_key || ENV['EVENTIFY_API_KEY']
       if @api_key.to_s.empty?
         raise Error, 'Please provide api_key param or set EVENTIFY_API_KEY env variable' # rubocop:disable LineLength
       end
 
       @raise_errors = raise_errors
+      @logger = logger
     end
 
     def publish(type:, data:)
       response = post_request('events', type, data)
 
       error_message = response['error_message'] || ''
+      log_error(error_message, 'publish', params: { type: type, data: data })
+
       raise Error, error_message unless error_message.empty?
 
       true
@@ -35,13 +38,20 @@ module EventifyPro
 
     private
 
-    attr_reader :api_key, :raise_errors
+    attr_reader :api_key, :raise_errors, :logger
 
     def process_error(error)
       return false unless raise_errors
 
       raise error if error.is_a?(Error)
       raise Error, 'Could not publish event'
+    end
+
+    def log_error(message, method, params:)
+      message = "[EVENTIFY_PRO] Message: #{message}\nMethod: #{method} with params: #{params}" # rubocop:disable LineLength
+      return logger.info(message) if logger.respond_to?(:info)
+      raise NotImplementedError,
+            'Logger that you provided should respond to #info(message) call'
     end
 
     def post_request(end_point, type, data)
