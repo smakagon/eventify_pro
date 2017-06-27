@@ -51,14 +51,14 @@ end
 Great, now to publish event from any place of your app use:
 
 ```ruby
-Eventify.publish('UserSignedUp', { user_id: 1, first_name: 'John', last_name: 'Doe' })
+Eventify.publish('UserSignedUp', user_id: 1, first_name: 'John', last_name: 'Doe')
 ```
 
 * `type`: type of the event
 
 * `data`: key and value pairs pertaining to the event
 
-PS: Don't forget to enable loading of the `lib` directory in application.rb file:
+Don't forget to enable loading of the `lib` directory in application.rb file:
 
 ```ruby
 # config/application.rb
@@ -85,8 +85,8 @@ ___
 ## Configuration
 
 #### `raise_error:`
-* By default, EventifyPro will swallow errors. It will return `true` or `false` depending on the result of publishing.
-* It's possible to pass `raise_errors: true`. In that case EventifyPro will throw EventifyPro::Error exception if something went wrong.
+* By default, `EventifyPro::Client` will swallow errors. It will return `true` or `false` depending on the result of publishing.
+* It's possible to pass `raise_errors: true`. In that case client will throw `EventifyPro::Error` exception if something went wrong.
 
 Example:
 ```ruby
@@ -99,7 +99,7 @@ end
 ```
 
 #### `logger`
-* By default, EventifyPro will use STDOUT to print error details.
+* By default, client will use STDOUT to print error details.
 * You can provide any logger that responds to `.info(message)`. For example `Rails.logger`.
 
 Example:
