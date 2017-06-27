@@ -84,7 +84,7 @@ end
 ___
 ## Configuration
 
-#### `raise_error:`
+#### `raise_errors:`
 * By default, `EventifyPro::Client` will swallow errors. It will return `true` or `false` depending on the result of publishing.
 * It's possible to pass `raise_errors: true`. In that case client will throw `EventifyPro::Error` exception if something went wrong.
 
