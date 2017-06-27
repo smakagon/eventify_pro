@@ -49,6 +49,7 @@ module EventifyPro
       true
     rescue => e
       process_error(e, 'publish', type: type, data: data)
+      false
     end
 
     private

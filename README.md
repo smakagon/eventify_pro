@@ -40,7 +40,7 @@ In a basic Ruby On Rails application you could create class under `lib` director
 
 class Eventify
   def self.client
-    @client ||= EventifyPro::Client.new(api_key: 'secret')
+    @client ||= EventifyPro::Client.new(api_key: 'secret', logger: Rails.logger)
   end
 
   def self.publish(event_type, data)
@@ -82,21 +82,29 @@ class OrdersController < ApplicationController
 end
 ```
 ___
-## Options
+## Configuration
 
-Example:
-* `raise_error:`
-  * By default, EventifyPro will swallow errors. It will return `true` or `false` depending on the result of publishing.
-  * It's possible to pass `raise_errors: true`. In that case EventifyPro will throw EventifyPro::Error exception if something went wrong.
+### `raise_error:`
+* By default, EventifyPro will swallow errors. It will return `true` or `false` depending on the result of publishing.
+* It's possible to pass `raise_errors: true`. In that case EventifyPro will throw EventifyPro::Error exception if something went wrong.
 
 Example:
 ```ruby
-eventify_client = EventifyPro::Client.new(api_key: 'secret', raise_errors: true)
+client = EventifyPro::Client.new(api_key: 'secret', raise_errors: true)
 begin
-  eventify_client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 1500 })
+  client.publish(type: 'OrderCreated', data: { order_id: 1, amount: 1500 })
 rescue EventifyPro::Error
   # exception handling
 end
+```
+
+### `logger`
+* By default, EventifyPro will use STDOUT to print error details.
+* You can provide any logger that responds to `.info(message)`. For example `Rails.logger`.
+
+Example:
+```ruby
+client = EventifyPro::Client.new(api_key: 'secret', logger: Rails.logger)
 ```
 
 ## License
