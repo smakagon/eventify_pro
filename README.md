@@ -84,7 +84,7 @@ end
 ___
 ## Configuration
 
-### `raise_error:`
+#### `raise_error:`
 * By default, EventifyPro will swallow errors. It will return `true` or `false` depending on the result of publishing.
 * It's possible to pass `raise_errors: true`. In that case EventifyPro will throw EventifyPro::Error exception if something went wrong.
 
@@ -98,7 +98,7 @@ rescue EventifyPro::Error
 end
 ```
 
-### `logger`
+#### `logger`
 * By default, EventifyPro will use STDOUT to print error details.
 * You can provide any logger that responds to `.info(message)`. For example `Rails.logger`.
 
