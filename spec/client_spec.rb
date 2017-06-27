@@ -157,5 +157,39 @@ RSpec.describe EventifyPro::Client do
         end
       end
     end
+
+    context 'logger' do
+      let(:expected_message) { "[EVENTIFY_PRO] #publish call returned error: Invalid API key\nParams: {:type=>\"ProfileCreated\", :data=>{:name=>\"John\", :email=>\"john@doe.com\"}}" } # rubocop:disable LineLength
+
+      before do
+        stub_request(:post, "#{base_uri}/events")
+          .with(expected_request)
+          .to_return(body: response_with_error, status: 401)
+      end
+
+      context 'with default logger' do
+        let(:client) { described_class.new(api_key: 'secret') }
+
+        it 'calls .info with error message' do
+          expect_any_instance_of(EventifyPro::DefaultLogger).to(
+            receive(:info).with(expected_message)
+          )
+          client.publish(type: event_type, data: event_data)
+        end
+      end
+
+      context 'with custom logger' do
+        let(:logger) { double('logger', info: true) }
+
+        let(:client) do
+          described_class.new(api_key: 'secret', logger: logger)
+        end
+
+        it 'calls .info with error message' do
+          expect(logger).to receive(:info).with(expected_message)
+          client.publish(type: event_type, data: event_data)
+        end
+      end
+    end
   end
 end

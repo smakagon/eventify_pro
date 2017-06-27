@@ -4,20 +4,37 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-# Eventify allows to publish events from Ruby applications
+# Eventify
 module EventifyPro
   Error = Class.new(StandardError)
   ServiceUnavailableError = Class.new(Error)
 
-  # Client that allows to publish events
+  # EventifyPro::Client allows to publish events.
+  #
+  # To instantiate very basic client use this code:
+  # `client = EventifyPro::Client.new(api_key: 'personal_api_key')`
+  # Then use it this way:
+  # `client.publish(type: 'OrderPosted', data: { order_id: 10, amount: 3000 })`
+  #
+  # Configuration
+  #
+  # raise_errors:
+  # By default client will not throw any exception. `publish` will return either
+  # `true` or `false` depending on the result of publishing.
+  # It's possible to configure client to throw an `EventifyPro::Error`
+  # if exception wasn't published.
+  # `EventifyPro::Client.new(api_key: 'personal_api_key', raise_errors: true)`
+  #
+  # logger:
+  # By default client will write errors to STDOUT, but it's possible to pass
+  # any custom logger that responds to .info(message):
+  # `EventifyPro::Client.new(api_key: 'personal_api_key', logger: Rails.logger)`
   class Client
     BASE_URI = 'http://api.eventify.pro/v1'
 
     def initialize(api_key: nil, raise_errors: false, logger: EventifyPro::DefaultLogger.new) # rubocop:disable LineLength
-      @api_key = api_key || ENV['EVENTIFY_API_KEY']
-      if @api_key.to_s.empty?
-        raise Error, 'Please provide api_key param or set EVENTIFY_API_KEY env variable' # rubocop:disable LineLength
-      end
+      @api_key = api_key || ENV['EVENTIFY_PRO_API_KEY']
+      validate_api_key_presence!
 
       @raise_errors = raise_errors
       @logger = logger
@@ -27,31 +44,29 @@ module EventifyPro
       response = post_request('events', type, data)
 
       error_message = response['error_message'] || ''
-      log_error(error_message, 'publish', params: { type: type, data: data })
-
       raise Error, error_message unless error_message.empty?
 
       true
     rescue => e
-      process_error(e)
+      process_error(e, 'publish', type: type, data: data)
     end
 
     private
 
     attr_reader :api_key, :raise_errors, :logger
 
-    def process_error(error)
-      return false unless raise_errors
+    def process_error(error, method, params)
+      error = Error.new('Could not publish event') unless error.is_a?(Error)
+      log_error(error.message, method, params)
 
-      raise error if error.is_a?(Error)
-      raise Error, 'Could not publish event'
+      raise error if raise_errors
     end
 
-    def log_error(message, method, params:)
-      message = "[EVENTIFY_PRO] Message: #{message}\nMethod: #{method} with params: #{params}" # rubocop:disable LineLength
+    def log_error(message, method, params)
+      message = "[EVENTIFY_PRO] ##{method} call returned error: #{message}\nParams: #{params}" # rubocop:disable LineLength
       return logger.info(message) if logger.respond_to?(:info)
-      raise NotImplementedError,
-            'Logger that you provided should respond to #info(message) call'
+
+      raise NotImplementedError, 'Logger should respond to #info(message) call'
     end
 
     def post_request(end_point, type, data)
@@ -76,6 +91,12 @@ module EventifyPro
         'Authorization' => api_key,
         'Content-Type' => 'application/json; charset=utf-8'
       }
+    end
+
+    def validate_api_key_presence!
+      return unless api_key.to_s.empty?
+
+      raise Error, 'Please provide api_key param or set EVENTIFY_PRO_API_KEY environment variable' # rubocop:disable LineLength
     end
   end
 end
