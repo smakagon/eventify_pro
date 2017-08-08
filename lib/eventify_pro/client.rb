@@ -3,6 +3,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'logger'
 
 # Eventify
 module EventifyPro
@@ -32,7 +33,8 @@ module EventifyPro
   class Client
     BASE_URI = 'http://api.eventify.pro/v1'
 
-    def initialize(api_key: nil, raise_errors: false, logger: EventifyPro::DefaultLogger.new) # rubocop:disable LineLength
+    # rubocop:disable LineLength
+    def initialize(api_key: nil, raise_errors: false, logger: Logger.new(STDOUT))
       @api_key = api_key || ENV['EVENTIFY_PRO_API_KEY']
       validate_api_key_presence!
 

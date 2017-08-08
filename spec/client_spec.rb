@@ -171,7 +171,7 @@ RSpec.describe EventifyPro::Client do
         let(:client) { described_class.new(api_key: 'secret') }
 
         it 'calls .info with error message' do
-          expect_any_instance_of(EventifyPro::DefaultLogger).to(
+          expect_any_instance_of(Logger).to(
             receive(:info).with(expected_message)
           )
           client.publish(type: event_type, data: event_data)
