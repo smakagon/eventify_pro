@@ -43,7 +43,7 @@ RSpec.describe EventifyPro::Client do
               .with(expected_request).to_return(body: response, status: 200)
 
             expect(
-              client.publish(type: event_type, data: event_data)
+              client.publish(type: event_type, data: event_data, async: false)
             ).to be_truthy
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
@@ -58,7 +58,7 @@ RSpec.describe EventifyPro::Client do
               .to_return(body: response_with_error, status: 401)
 
             expect do
-              client.publish(type: event_type, data: event_data)
+              client.publish(type: event_type, data: event_data, async: false)
             end.to raise_error(EventifyPro::Error, 'Invalid API key')
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
@@ -73,7 +73,7 @@ RSpec.describe EventifyPro::Client do
               .to_return(body: invalid_response, status: 401)
 
             expect do
-              client.publish(type: event_type, data: event_data)
+              client.publish(type: event_type, data: event_data, async: false)
             end.to raise_error(
               EventifyPro::Error, 'Could not process response from EventifyPro'
             )
@@ -87,7 +87,7 @@ RSpec.describe EventifyPro::Client do
           it 'raises an EventifyPro::ServiceUnavailableError' do
             stub_request(:post, "#{base_uri}/events").to_timeout
             expect do
-              client.publish(type: event_type, data: event_data)
+              client.publish(type: event_type, data: event_data, async: false)
             end.to raise_error(
               EventifyPro::ServiceUnavailableError,
               'EventifyPro is currently unavaliable'
@@ -108,7 +108,7 @@ RSpec.describe EventifyPro::Client do
               .with(expected_request).to_return(body: response, status: 200)
 
             expect(
-              client.publish(type: event_type, data: event_data)
+              client.publish(type: event_type, data: event_data, async: false)
             ).to be_truthy
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
@@ -122,9 +122,9 @@ RSpec.describe EventifyPro::Client do
               .with(expected_request)
               .to_return(body: response_with_error, status: 401)
 
-            expect(client.publish(type: event_type, data: event_data)).to(
-              be_falsey
-            )
+            expect(
+              client.publish(type: event_type, data: event_data, async: false)
+            ).to be_falsey
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
               .with(expected_request).once
@@ -137,9 +137,9 @@ RSpec.describe EventifyPro::Client do
               .with(expected_request)
               .to_return(body: invalid_response, status: 401)
 
-            expect(client.publish(type: event_type, data: event_data)).to(
-              be_falsey
-            )
+            expect(
+              client.publish(type: event_type, data: event_data, async: false)
+            ).to be_falsey
 
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
               .with(expected_request).once
@@ -149,9 +149,9 @@ RSpec.describe EventifyPro::Client do
         context 'when API is unavailable' do
           it 'returns false' do
             stub_request(:post, "#{base_uri}/events").to_timeout
-            expect(client.publish(type: event_type, data: event_data)).to(
-              be_falsey
-            )
+            expect(
+              client.publish(type: event_type, data: event_data, async: false)
+            ).to be_falsey
             expect(WebMock).to have_requested(:post, "#{base_uri}/events")
           end
         end
@@ -174,7 +174,7 @@ RSpec.describe EventifyPro::Client do
           expect_any_instance_of(Logger).to(
             receive(:info).with(expected_message)
           )
-          client.publish(type: event_type, data: event_data)
+          client.publish(type: event_type, data: event_data, async: false)
         end
       end
 
@@ -187,7 +187,7 @@ RSpec.describe EventifyPro::Client do
 
         it 'calls .info with error message' do
           expect(logger).to receive(:info).with(expected_message)
-          client.publish(type: event_type, data: event_data)
+          client.publish(type: event_type, data: event_data, async: false)
         end
       end
     end

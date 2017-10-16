@@ -40,9 +40,23 @@ module EventifyPro
 
       @raise_errors = raise_errors
       @logger = logger
+      @async = async
     end
 
-    def publish(type:, data:)
+    # async option:
+    # By default publishing will happen in async way in the separate thread.
+    # To publish event in synchronous way, just specify `async: false` option
+    def publish(type:, data:, async: true)
+      return publish_event(type, data) unless async
+
+      Thread.new { publish_event(type, data) }
+    end
+
+    private
+
+    attr_reader :api_key, :raise_errors, :logger, :async
+
+    def publish_event(type, data)
       response = post_request('events', type, data)
 
       error_message = response['error_message'] || ''
@@ -53,10 +67,6 @@ module EventifyPro
       process_error(e, 'publish', type: type, data: data)
       false
     end
-
-    private
-
-    attr_reader :api_key, :raise_errors, :logger
 
     def process_error(error, method, params)
       error = Error.new('Could not publish event') unless error.is_a?(Error)

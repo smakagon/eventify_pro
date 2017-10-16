@@ -107,6 +107,15 @@ Example:
 client = EventifyPro::Client.new(api_key: 'secret', logger: Rails.logger)
 ```
 
+### `async` for `publish`
+By default publishing will happen in async way in the separate thread.
+To publish event in synchronous way, just specify `async: false` option
+
+```ruby
+client = EventifyPro::Client.new(api_key: 'secret')
+client.publish(type: 'OrderCreated', data: { amount: 500 }, async: false)
+```
+
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
